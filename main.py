@@ -4,14 +4,19 @@ import logging
 
 def main():
     global window, width, color, cellWidth, box_start_pos
+    initialize_game()
+    redraw()
+    pygame.time.delay(5000)
+
+
+def initialize_game():
+    global box_start_pos, width, cellWidth, color, window
     pygame.init()
     box_start_pos = (1, 1)
     width = 300
     cellWidth = int(width / 3)
     color = (255, 255, 255)
     window = pygame.display.set_mode((width, width))
-    redraw()
-    pygame.time.delay(5000)
 
 
 def draw_matrix():
@@ -24,17 +29,29 @@ def draw_matrix():
 def drawX_in_cell(param):
     pygame.display.set_caption("This is text")
     font = pygame.font.Font('freesansbold.ttf', 80)
-    text = font.render('X', True, color, (0, 0, 0))
+    text = font.render('O', True, color, (0, 0, 0))
     textRect = text.get_rect()
-    textRect.center = (((param[0] * cellWidth) + cellWidth) // 2, ((param[1] * cellWidth) + cellWidth) // 2)
+    start = get_start_cell(param)
+    end = get_end_cell(param)
+    print("X = [(" + str(start) + ")]  Y = [" + str(end) + "]")
+    textRect.center = (((end[0] - start[0]) // 2) + (param[0] * cellWidth),
+                       ((end[1] - start[1]) // 2) + (param[1] * cellWidth))
+    print("centre is [" + str(textRect.center) + "]")
     window.blit(text, textRect)
 
+
+def get_end_cell(param):
+    return ((param[0] * cellWidth) + cellWidth), ((param[1] * cellWidth) + cellWidth)
+
+
+def get_start_cell(param):
+    return (param[0] * cellWidth), (param[1] * cellWidth)
 
 
 def redraw():
     draw_border()
     draw_matrix()
-    drawX_in_cell((0, 0))
+    drawX_in_cell((1, 1))
     pygame.display.update()
 
 
