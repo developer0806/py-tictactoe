@@ -1,32 +1,48 @@
 import pygame
 
 
+def updated_highlighted_cell(key):
+    global highlighted_cell, selected_cell
+    highlighted_cell_x = highlighted_cell[0]
+    highlighted_cell_y = highlighted_cell[1]
+    if key == "return":
+        selected_cell = highlighted_cell
+    if key == "up":
+        if highlighted_cell_x > 0:
+            highlighted_cell_x -= 1
+    if key == "down":
+        if highlighted_cell_x < 2:
+            highlighted_cell_x += 1
+    if key == "left":
+        if highlighted_cell_y > 0:
+            highlighted_cell_y -= 1
+    if key == "right":
+        if highlighted_cell_y < 2:
+            highlighted_cell_y += 1
+    highlighted_cell = (highlighted_cell_x, highlighted_cell_y)
+    print("highlighted_cell is [" + str(highlighted_cell) + "]")
+
+
 def main():
     initialize_game()
-    count = 5
+    count = 20
+    redraw()
 
     while who_won == "none":
         event = pygame.event.poll()
         if event.type == pygame.KEYUP:
             key = pygame.key.name(event.key)
             print("Key is [" + key + "]")
+            updated_highlighted_cell(key)
             count -= 1
             if count == 0:
                 break
-
-        redraw()
+            redraw()
     pygame.time.delay(2000)
 
 
 def initialize_game():
-    global window, width, color, cellWidth, box_start_pos, who_won, box_start_pos, width, cellWidth, color, window
-    who_won = "none"
     pygame.init()
-    box_start_pos = (1, 1)
-    width = 300
-    cellWidth = int(width / 3)
-    color = (255, 255, 255)
-    window = pygame.display.set_mode((width, width))
 
 
 def draw_matrix():
@@ -55,24 +71,23 @@ def get_center(param):
     start = get_start_cell(param)
     end = get_end_cell(param)
     # print("X = [(" + str(start) + ")]  Y = [" + str(end) + "]")
-    return (((end[0] - start[0]) // 2) + (param[0] * cellWidth),
-            ((end[1] - start[1]) // 2) + (param[1] * cellWidth))
+    return (((end[1] - start[1]) // 2) + (param[1] * cellWidth),
+            ((end[0] - start[0]) // 2) + (param[0] * cellWidth))
 
 
 def get_end_cell(param):
-    return ((param[0] * cellWidth) + cellWidth), ((param[1] * cellWidth) + cellWidth)
+    return ((param[1] * cellWidth) + cellWidth), ((param[0] * cellWidth) + cellWidth)
 
 
 def get_start_cell(param):
-    return (param[0] * cellWidth), (param[1] * cellWidth)
+    return (param[1] * cellWidth), (param[0] * cellWidth)
 
 
 def redraw():
     draw_border()
     draw_matrix()
-    cell = (0, 0)
-    draw_highlighted_cell(cell)
-    draw_char_in_cell(cell, "X")
+    draw_highlighted_cell(highlighted_cell)
+    draw_char_in_cell(selected_cell, "X")
     pygame.display.update()
 
 
@@ -80,4 +95,12 @@ def draw_border():
     pygame.draw.rect(window, color, (box_start_pos, ((width - 2), (width - 2))), 2)
 
 
+box_start_pos = (0, 0)
+who_won = "none"
+highlighted_cell = (1, 1)
+selected_cell = (-1, -1)
+width = 300
+cellWidth = int(width / 3)
+color = (255, 255, 255)
+window = pygame.display.set_mode((width, width))
 main()
