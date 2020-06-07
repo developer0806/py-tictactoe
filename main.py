@@ -2,10 +2,14 @@ import pygame
 
 
 def updated_highlighted_cell(key):
-    global highlighted_cell, selected_cell
+    global highlighted_cell, selected_cell, char
     highlighted_cell_x = highlighted_cell[0]
     highlighted_cell_y = highlighted_cell[1]
+    if key == "space":
+        char = "O"
+        selected_cell = highlighted_cell
     if key == "return":
+        char = "X"
         selected_cell = highlighted_cell
     if key == "up":
         if highlighted_cell_x > 0:
@@ -87,7 +91,7 @@ def redraw():
     draw_border()
     draw_matrix()
     draw_highlighted_cell(highlighted_cell)
-    draw_char_in_cell(selected_cell, "X")
+    draw_char_in_cell(selected_cell, char)
     pygame.display.update()
 
 
@@ -95,6 +99,7 @@ def draw_border():
     pygame.draw.rect(window, color, (box_start_pos, ((width - 2), (width - 2))), 2)
 
 
+char = "X"
 box_start_pos = (0, 0)
 who_won = "none"
 highlighted_cell = (1, 1)
