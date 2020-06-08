@@ -1,16 +1,31 @@
 import pygame
+from board import *
+
+
+def get_char_for_move():
+    if (move_count % 2) == 0:
+        return "X"
+    else:
+        return "O"
+
+
+def get_num_for_move():
+    if (move_count % 2) == 0:
+        return "1"
+    else:
+        return "0"
 
 
 def updated_highlighted_cell(key):
-    global highlighted_cell, selected_cell, char
+    global highlighted_cell, selected_cell, char, move_count
     highlighted_cell_x = highlighted_cell[0]
     highlighted_cell_y = highlighted_cell[1]
+
     if key == "space":
-        char = "O"
+        char = get_char_for_move()
         selected_cell = highlighted_cell
-    if key == "return":
-        char = "X"
-        selected_cell = highlighted_cell
+        assign_cell(get_num_for_move(), selected_cell)
+        move_count += 1
     if key == "up":
         if highlighted_cell_x > 0:
             highlighted_cell_x -= 1
@@ -29,7 +44,6 @@ def updated_highlighted_cell(key):
 
 def main():
     initialize_game()
-    count = 20
     redraw()
 
     while who_won == "none":
@@ -38,15 +52,13 @@ def main():
             key = pygame.key.name(event.key)
             print("Key is [" + key + "]")
             updated_highlighted_cell(key)
-            count -= 1
-            if count == 0:
-                break
             redraw()
     pygame.time.delay(2000)
 
 
 def initialize_game():
     pygame.init()
+    initialize_board()
 
 
 def draw_matrix():
@@ -100,6 +112,7 @@ def draw_border():
 
 
 char = "X"
+move_count = 1
 box_start_pos = (0, 0)
 who_won = "none"
 highlighted_cell = (1, 1)
