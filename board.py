@@ -39,4 +39,3 @@ def print_board():
 
 
 board = []
-main()
