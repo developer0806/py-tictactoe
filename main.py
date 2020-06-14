@@ -17,7 +17,7 @@ def get_num_for_move():
 
 
 def updated_highlighted_cell(key):
-    global highlighted_cell, selected_cell, char, move_count
+    global highlighted_cell, selected_cell
     highlighted_cell_x = highlighted_cell[0]
     highlighted_cell_y = highlighted_cell[1]
 
@@ -41,14 +41,14 @@ def updated_highlighted_cell(key):
 
 
 def on_key_event_space():
-    global char, selected_cell, move_count
-    char = get_char_for_move()
-    selected_cell = highlighted_cell
+    global selected_cell, move_count
     try:
+        print("cell [" + str(get_num_for_move()) + "] selected_cell [" + format(selected_cell) + "]")
+        selected_cell = highlighted_cell
         assign_cell(get_num_for_move(), selected_cell)
         move_count += 1
-    except Exception:
-        print("Cell is already used!")
+    except Exception as e:
+        print("Cell is already used! Error [" + format(e) + "]")
 
 
 def main():
@@ -78,23 +78,55 @@ def draw_matrix():
 
 def draw_highlighted_cell(param):
     start = get_start_cell(param)
-    end = get_end_cell(param)
     pygame.draw.rect(window, (255, 255, 0), (start, (cellWidth, cellWidth)), 2)
 
 
-def draw_char_in_cell():
-    pygame.display.set_caption("This is text")
+def draw_cell_border(cell_location):
+    start = get_start_cell(cell_location)
+    pygame.draw.rect(window, get_cell_color(cell_location), (start, (cellWidth, cellWidth)), 2)
+
+
+def get_cell_color(cell_location):
+    cell_color = color
+    if cell_location == highlighted_cell:
+        cell_color = (255, 255, 0)
+    return cell_color
+
+
+def translate_content(content):
+    if content == -1:
+        return " "
+    if content == 1:
+        return "X"
+    if content == 0:
+        return "O"
+
+
+def draw_current_game_state():
+    rows = len(board)
+    columns = len(board[0])
+    for i in range(rows):
+        for j in range(columns):
+            draw_cell((i, j), translate_content(board[i][j]))
+
+
+def draw_cell_content(cell_location, content):
+    pygame.display.set_caption(content)
     font = pygame.font.Font('freesansbold.ttf', 80)
-    text = font.render(char, True, color, (0, 0, 0))
+    text = font.render(content, True, color, (0, 0, 0))
     text_rect = text.get_rect()
-    text_rect.center = get_center(selected_cell)
+    text_rect.center = get_center(cell_location)
     window.blit(text, text_rect)
+
+
+def draw_cell(cell_location, content):
+    draw_cell_border(cell_location)
+    draw_cell_content(cell_location, content)
 
 
 def get_center(param):
     start = get_start_cell(param)
     end = get_end_cell(param)
-    # print("X = [(" + str(start) + ")]  Y = [" + str(end) + "]")
     return (((end[1] - start[1]) // 2) + (param[1] * cellWidth),
             ((end[0] - start[0]) // 2) + (param[0] * cellWidth))
 
@@ -108,18 +140,10 @@ def get_start_cell(param):
 
 
 def redraw():
-    draw_border()
-    draw_matrix()
-    draw_highlighted_cell(highlighted_cell)
-    draw_char_in_cell()
+    draw_current_game_state()
     pygame.display.update()
 
 
-def draw_border():
-    pygame.draw.rect(window, color, (box_start_pos, ((width - 2), (width - 2))), 2)
-
-
-char = "X"
 move_count = 1
 box_start_pos = (0, 0)
 who_won = "none"
