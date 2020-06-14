@@ -3,7 +3,7 @@ from array import *
 
 def main():
     initialize_board()
-    print_board()
+    # print_board()
 
 
 def initialize_board():
@@ -18,12 +18,12 @@ def initialize_board():
 
 
 def is_not_used(cell_location):
-    print("Cell @loc [" + str(cell_location) + "] has value [" + format(board[cell_location[0]][cell_location[1]]) + "]")
+    # print("Cell @loc [" + str(cell_location) + "] has value [" + format(board[cell_location[0]][cell_location[1]]) + "]")
     return board[cell_location[0]][cell_location[1]] == -1
 
 
 def assign_cell(value, cell_location):
-    print("assign_cell(" + format(value) + ", " + str(cell_location) + "]")
+    # print("assign_cell(" + format(value) + ", " + str(cell_location) + "]")
     if is_not_used(cell_location):
         board[cell_location[0]][cell_location[1]] = value
     else:

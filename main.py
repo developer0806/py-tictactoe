@@ -11,9 +11,9 @@ def get_char_for_move():
 
 def get_num_for_move():
     if (move_count % 2) == 0:
-        return 1
-    else:
         return 0
+    else:
+        return 1
 
 
 def updated_highlighted_cell(key):
@@ -21,6 +21,8 @@ def updated_highlighted_cell(key):
     highlighted_cell_x = highlighted_cell[0]
     highlighted_cell_y = highlighted_cell[1]
 
+    if key == "return":
+        determine_winner()
     if key == "space":
         on_key_event_space()
     if key == "up":
@@ -36,19 +38,69 @@ def updated_highlighted_cell(key):
         if highlighted_cell_y < 2:
             highlighted_cell_y += 1
     highlighted_cell = (highlighted_cell_x, highlighted_cell_y)
-    print("highlighted_cell is [" + str(highlighted_cell) + "]")
-    print_board()
+    # print("highlighted_cell is [" + str(highlighted_cell) + "]")
+    # print_board()
 
 
 def on_key_event_space():
     global selected_cell, move_count
     try:
-        print("cell [" + str(get_num_for_move()) + "] selected_cell [" + format(selected_cell) + "]")
+        # print("cell [" + str(get_num_for_move()) + "] selected_cell [" + format(selected_cell) + "]")
         selected_cell = highlighted_cell
         assign_cell(get_num_for_move(), selected_cell)
         move_count += 1
     except Exception as e:
         print("Cell is already used! Error [" + format(e) + "]")
+
+
+def is_winner_in_rows():
+    global who_won
+    rows = len(board)
+    for i in range(rows):
+        # print("Row [" + str(i) + "] value [" + format(board[i]) + "]")
+        if is_winner_in_array(board[i]):
+            return True
+    return False
+
+
+def is_winner_in_columns():
+    columns = len(board[0])
+    rows = len(board)
+    for j in range(columns):
+        column = array("b", [])
+        for i in range(rows):
+            column.insert(i, board[i][j])
+        # print("column [" + str(j) + "] value [" + format(column) + "]")
+        if is_winner_in_array(column):
+            return True
+    return False
+
+
+def is_winner_in_diagonals():
+    diagonal_1 = array("b", [board[0][0], board[1][1], board[2][2]])
+    # print("Diagonal_1 [" + str(diagonal_1) + "] ")
+    if not is_winner_in_array(diagonal_1):
+        diagonal_2 = array("b", [board[0][2], board[1][1], board[2][0]])
+        # print("Diagonal_2 [" + str(diagonal_2) + "] ")
+        return is_winner_in_array(diagonal_2)
+    else:
+        return True
+
+
+def is_winner_in_array(my_array):
+    global who_won
+    if my_array == array("b", [0, 0, 0]):
+        who_won = "O"
+        return True
+    if my_array == array("b", [1, 1, 1]):
+        who_won = "X"
+        return True
+
+
+def determine_winner():
+    if not is_winner_in_rows():
+        if not is_winner_in_columns():
+            is_winner_in_diagonals()
 
 
 def main():
@@ -59,9 +111,11 @@ def main():
         event = pygame.event.poll()
         if event.type == pygame.KEYUP:
             key = pygame.key.name(event.key)
-            print("Key is [" + key + "]")
+            # print("Key is [" + key + "]")
             updated_highlighted_cell(key)
             redraw()
+        determine_winner()
+    print("who won [" + who_won + "]")
 
 
 def initialize_game():
