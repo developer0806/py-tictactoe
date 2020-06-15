@@ -110,10 +110,19 @@ def main():
     while who_won == "none":
         event = pygame.event.poll()
         handle_event(event)
+        if is_window_close_event(event):
+            break
         if are_all_cells_filled():
             print("All cells are filled!")
             break
     print("Game Over. \n who won [" + who_won + "]")
+
+
+def is_window_close_event(event):
+    if event.type == pygame.QUIT:
+        print("Window closed!")
+        return True
+    return False
 
 
 def handle_event(event):
