@@ -44,4 +44,12 @@ def print_board():
         print(row_str)
 
 
+def are_all_cells_filled():
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] == -1:
+                return False
+    return True
+
+
 board = []

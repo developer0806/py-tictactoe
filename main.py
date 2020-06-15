@@ -109,13 +109,20 @@ def main():
 
     while who_won == "none":
         event = pygame.event.poll()
-        if event.type == pygame.KEYUP:
-            key = pygame.key.name(event.key)
-            # print("Key is [" + key + "]")
-            updated_highlighted_cell(key)
-            redraw()
-        determine_winner()
-    print("who won [" + who_won + "]")
+        handle_event(event)
+        if are_all_cells_filled():
+            print("All cells are filled!")
+            break
+    print("Game Over. \n who won [" + who_won + "]")
+
+
+def handle_event(event):
+    if event.type == pygame.KEYUP:
+        key = pygame.key.name(event.key)
+        # print("Key is [" + key + "]")
+        updated_highlighted_cell(key)
+        redraw()
+    determine_winner()
 
 
 def initialize_game():
@@ -165,7 +172,6 @@ def draw_current_game_state():
 
 
 def draw_cell_content(cell_location, content):
-    pygame.display.set_caption(content)
     font = pygame.font.Font('freesansbold.ttf', 80)
     text = font.render(content, True, color, (0, 0, 0))
     text_rect = text.get_rect()
@@ -194,6 +200,7 @@ def get_start_cell(param):
 
 
 def redraw():
+    pygame.display.set_caption("Tic Tac Toe")
     draw_current_game_state()
     pygame.display.update()
 
